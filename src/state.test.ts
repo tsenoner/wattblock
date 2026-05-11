@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { INITIAL_STATE, addPoint, sumFor, isGestrichen, winnerOf, undo, type AppState, type TeamId } from "./state";
+import { INITIAL_STATE, addPoint, sumFor, isGestrichen, winnerOf, undo, updateSetup, newMatch, start, openSetup, type AppState, type TeamId } from "./state";
 
 describe("INITIAL_STATE", () => {
   it("starts in setup view, target 15, blank names, no scores", () => {
@@ -125,5 +125,41 @@ describe("undo", () => {
     expect(winnerOf(won)).toBe("A");
     const after = undo(won, "A");
     expect(winnerOf(after)).toBeNull();
+  });
+});
+
+describe("lifecycle actions", () => {
+  it("updateSetup overwrites setup but keeps scores and view", () => {
+    const s: AppState = {
+      ...INITIAL_STATE,
+      view: "scoring",
+      scores: [{ team: "A", value: 2 }],
+    };
+    const next = updateSetup(s, { target: 18, teamA: "X", teamB: "Y" });
+    expect(next.setup).toEqual({ target: 18, teamA: "X", teamB: "Y" });
+    expect(next.scores).toEqual([{ team: "A", value: 2 }]);
+    expect(next.view).toBe("scoring");
+  });
+
+  it("newMatch clears scores, keeps setup, switches to setup view", () => {
+    const s: AppState = {
+      ...INITIAL_STATE,
+      view: "scoring",
+      setup: { target: 11, teamA: "X", teamB: "Y" },
+      scores: [{ team: "A", value: 5 }],
+    };
+    const next = newMatch(s);
+    expect(next.scores).toEqual([]);
+    expect(next.setup).toEqual({ target: 11, teamA: "X", teamB: "Y" });
+    expect(next.view).toBe("setup");
+  });
+
+  it("start switches view to scoring", () => {
+    expect(start(INITIAL_STATE).view).toBe("scoring");
+  });
+
+  it("openSetup switches view to setup", () => {
+    const s: AppState = { ...INITIAL_STATE, view: "scoring" };
+    expect(openSetup(s).view).toBe("setup");
   });
 });

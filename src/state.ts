@@ -55,3 +55,19 @@ export function undo(state: AppState, team: TeamId): AppState {
   const scores = state.scores.slice(0, lastIdx).concat(state.scores.slice(lastIdx + 1));
   return { ...state, scores };
 }
+
+export function updateSetup(state: AppState, setup: Setup): AppState {
+  return { ...state, setup };
+}
+
+export function newMatch(state: AppState): AppState {
+  return { ...state, scores: [], view: "setup" };
+}
+
+export function start(state: AppState): AppState {
+  return { ...state, view: "scoring" };
+}
+
+export function openSetup(state: AppState): AppState {
+  return { ...state, view: "setup" };
+}
