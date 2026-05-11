@@ -1,12 +1,17 @@
-export type Theme = "auto" | "light" | "dark";
+export type Theme = "light" | "dark";
 
 export const THEME_KEY = "wattblock:theme";
 
-const THEMES: readonly Theme[] = ["auto", "light", "dark"];
+function systemPrefersDark(): boolean {
+  return typeof window !== "undefined"
+    && typeof window.matchMedia === "function"
+    && window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
 
 export function loadTheme(): Theme {
   const raw = localStorage.getItem(THEME_KEY);
-  return (THEMES as readonly string[]).includes(raw ?? "") ? (raw as Theme) : "auto";
+  if (raw === "light" || raw === "dark") return raw;
+  return systemPrefersDark() ? "dark" : "light";
 }
 
 export function saveTheme(theme: Theme): void {
@@ -14,11 +19,9 @@ export function saveTheme(theme: Theme): void {
 }
 
 export function nextTheme(theme: Theme): Theme {
-  return theme === "auto" ? "light" : theme === "light" ? "dark" : "auto";
+  return theme === "light" ? "dark" : "light";
 }
 
 export function applyTheme(theme: Theme): void {
-  const root = document.documentElement;
-  if (theme === "auto") root.removeAttribute("data-theme");
-  else root.setAttribute("data-theme", theme);
+  document.documentElement.setAttribute("data-theme", theme);
 }

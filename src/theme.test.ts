@@ -3,28 +3,34 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { loadTheme, saveTheme, nextTheme, applyTheme, THEME_KEY, type Theme } from "./theme";
 
 describe("nextTheme", () => {
-  it("cycles auto → light → dark → auto", () => {
-    expect(nextTheme("auto")).toBe("light");
+  it("toggles light ↔ dark", () => {
     expect(nextTheme("light")).toBe("dark");
-    expect(nextTheme("dark")).toBe("auto");
+    expect(nextTheme("dark")).toBe("light");
   });
 });
 
 describe("loadTheme", () => {
   beforeEach(() => localStorage.clear());
 
-  it("returns auto when nothing is stored", () => {
-    expect(loadTheme()).toBe("auto");
+  it("returns light when nothing is stored (jsdom has no system dark preference)", () => {
+    expect(loadTheme()).toBe("light");
   });
 
   it("returns the persisted value when valid", () => {
     localStorage.setItem(THEME_KEY, "dark");
     expect(loadTheme()).toBe("dark");
+    localStorage.setItem(THEME_KEY, "light");
+    expect(loadTheme()).toBe("light");
   });
 
-  it("returns auto when the persisted value is unrecognised", () => {
+  it("falls back to system default when the persisted value is unrecognised", () => {
     localStorage.setItem(THEME_KEY, "neon");
-    expect(loadTheme()).toBe("auto");
+    expect(loadTheme()).toBe("light");
+  });
+
+  it("falls back to system default when the persisted value is the legacy 'auto'", () => {
+    localStorage.setItem(THEME_KEY, "auto");
+    expect(loadTheme()).toBe("light");
   });
 });
 
@@ -36,8 +42,6 @@ describe("saveTheme", () => {
     expect(loadTheme()).toBe("light");
     saveTheme("dark");
     expect(loadTheme()).toBe("dark");
-    saveTheme("auto");
-    expect(loadTheme()).toBe("auto");
   });
 });
 
@@ -46,26 +50,26 @@ describe("applyTheme", () => {
     document.documentElement.removeAttribute("data-theme");
   });
 
-  it("removes data-theme when called with auto", () => {
-    document.documentElement.setAttribute("data-theme", "light");
-    applyTheme("auto");
-    expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
-  });
-
-  it("sets data-theme=light when called with light", () => {
+  it("sets data-theme=light", () => {
     applyTheme("light");
     expect(document.documentElement.getAttribute("data-theme")).toBe("light");
   });
 
-  it("sets data-theme=dark when called with dark", () => {
+  it("sets data-theme=dark", () => {
+    applyTheme("dark");
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+  });
+
+  it("replaces the previous value when called twice", () => {
+    applyTheme("light");
     applyTheme("dark");
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
   });
 });
 
 describe("Theme type", () => {
-  it("accepts the three legal values at the type level", () => {
-    const themes: Theme[] = ["auto", "light", "dark"];
-    expect(themes).toHaveLength(3);
+  it("accepts the two legal values at the type level", () => {
+    const themes: Theme[] = ["light", "dark"];
+    expect(themes).toHaveLength(2);
   });
 });

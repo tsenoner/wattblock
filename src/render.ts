@@ -17,10 +17,7 @@ export function escape(v: unknown): string {
 }
 
 function renderThemeToggle(theme: Theme): string {
-  const glyph =
-    theme === "light" ? renderSunGlyph()
-    : theme === "dark" ? renderMoonGlyph()
-    : renderAutoGlyph();
+  const glyph = theme === "light" ? renderSunGlyph() : renderMoonGlyph();
   return `
     <button type="button" class="theme-toggle" data-action="cycle-theme"
             aria-label="Theme: ${theme}" title="Theme">
@@ -49,15 +46,6 @@ function renderMoonGlyph(): string {
   return `
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-    </svg>
-  `;
-}
-
-function renderAutoGlyph(): string {
-  return `
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
-      <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
     </svg>
   `;
 }
