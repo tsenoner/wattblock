@@ -51,11 +51,32 @@
 
 * { box-sizing: border-box; }
 
+/*
+  GLOBAL TOUCH-ACTION — DO NOT REMOVE.
+
+  touch-action: manipulation on the document root kills iOS double-tap zoom
+  for the entire subtree (per the CSS Touch Action spec's ancestor walk, and
+  confirmed by the WebKit blog: "putting touch-action: manipulation on any
+  node opts all children of the node into the fast-tap optimization").
+
+  The per-element touch-action declarations below (on .rail__btn, .chip,
+  .history__btn, etc.) are now defensive layers. They became necessary
+  because disabled <button> elements do NOT dispatch pointer events on iOS,
+  so the element's OWN touch-action declaration is invisible to the gesture
+  recognizer (see w3c/pointerevents#177). The ancestor walk to html/body is
+  what catches the disabled-button case and the gap areas in flex/grid
+  containers. Keep the html/body declaration here AND the per-element ones
+  below — defense in depth.
+
+  manipulation still allows panning and pinch-zoom; only double-tap-zoom is
+  disabled. Pinch-zoom is preserved as an accessibility affordance.
+*/
 html, body {
   margin: 0;
   height: 100svh;
   overflow: hidden;
   overscroll-behavior: none;
+  touch-action: manipulation;
   background: var(--bg);
   color: var(--ink);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -78,7 +99,7 @@ body {
 }
 
 /* SETUP */
-.setup { display: flex; flex-direction: column; gap: 8px; }
+.setup { display: flex; flex-direction: column; gap: 8px; position: relative; }
 .setup__title {
   margin: 8px 0 24px;
   text-align: center;
@@ -314,19 +335,23 @@ body {
   display: block;
 }
 
-.scoring__chrome {
+/*
+  Both chrome wrappers position identically — top-right corner of their
+  parent. The parent (.setup or .scoring) sits inside #app, which is inside
+  body's safe-area padding, so a plain `top: 4px; right: 4px` is already
+  inside the safe area. Doubling with env(safe-area-inset-*) here pushes
+  the wrapper down by the notch height a SECOND time and causes it to
+  collide with the scoring grid content. Don't do that.
+*/
+.scoring__chrome,
+.setup__chrome {
   position: absolute;
-  top: max(4px, env(safe-area-inset-top));
-  right: max(8px, env(safe-area-inset-right));
+  top: 4px;
+  right: 4px;
   display: inline-flex;
   gap: 4px;
   align-items: center;
-}
-
-.setup__chrome {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0 0 -16px 0;
+  z-index: 1;
 }
 
 .banner__winner { font-size: 16px; line-height: 1.2; }

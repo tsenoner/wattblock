@@ -48,7 +48,9 @@ Run before each release. Phone (or Chrome DevTools narrow viewport, 390 px).
 ### v0.1.2 manual smoke test
 
 - [ ] No vertical scrollbar on a notched phone with an empty board (iPhone target = 15, no scores).
-- [ ] Double-tapping any point button (2 / 3 / 4 / 5 / −2) or Zurück / Wiederholen does **not** zoom the page.
+- [ ] Double-tapping any point button (2 / 3 / 4 / 5 / −2) does **not** zoom the page.
+- [ ] Double-tapping Zurück / Wiederholen does **not** zoom, even when the button is **disabled** (greyed out). This is the iOS quirk where `touch-action` on `disabled` buttons is bypassed — the global `touch-action: manipulation` on `html, body` catches it via the ancestor walk.
+- [ ] Theme toggle (moon / sun icon) sits at the top-right corner on BOTH the setup and scoring screens, at the same vertical position. No overlap with column headers or any other element.
 - [ ] Theme toggle (top-right corner of both setup and scoring) flips between light and dark. Reload — theme persists.
 - [ ] Add a `3` for team A. Tap **Zurück**. The `3` disappears, **Wiederholen** is enabled. Tap **Wiederholen**. The `3` reappears.
 - [ ] Add a `2` for team B. **Wiederholen** is disabled (new action invalidated redo).
