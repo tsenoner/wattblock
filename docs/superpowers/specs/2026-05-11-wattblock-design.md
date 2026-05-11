@@ -65,7 +65,7 @@ Each column: header (team name), vertical list of point entries, thick rule, sum
 
 When a column is gestrichen, a 3px vertical strike line is drawn through the centre of the scores area (between header and sum), passing through all entries.
 
-When the match ends, a dark banner is anchored inside the body with the winning team's name and the hint "tippen für neues Spiel".
+When the match ends, a compact single-line banner appears below the columns, height roughly that of one button row (~40 px). Content on one line: `"{winner} gewinnen · neues Spiel ↻"`. The whole strip is the tap target. It must not dominate the screen — the score columns remain the focus.
 
 Light / dark theme via `prefers-color-scheme`. No theme toggle.
 
