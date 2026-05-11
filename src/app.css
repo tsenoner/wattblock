@@ -24,6 +24,31 @@
   }
 }
 
+/* THEME OVERRIDES — keep tokens in sync with the :root and @media blocks above. */
+:root[data-theme="light"] {
+  --bg: #faf7f0;
+  --bg-card: #fffdf5;
+  --ink: #2b2a26;
+  --ink-soft: #7a7669;
+  --rule: #e6e0cc;
+  --accent: #c8a45a;
+  --neg: #b14f3b;
+  --undo: #6b6759;
+  --disabled: rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme="dark"] {
+  --bg: #1a1815;
+  --bg-card: #24221d;
+  --ink: #faf7f0;
+  --ink-soft: #a59e8a;
+  --rule: #3a362d;
+  --accent: #d2b06b;
+  --neg: #c46350;
+  --undo: #888373;
+  --disabled: rgba(255, 255, 255, 0.25);
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -273,4 +298,53 @@ body {
   touch-action: manipulation;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* THEME TOGGLE */
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 999px;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  color: var(--ink);
+  background: var(--bg-card);
+}
+.theme-toggle svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.scoring__chrome {
+  position: absolute;
+  top: max(4px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.setup__chrome {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 -16px 0;
+}
+
+.scoring__chrome .scoring__settings {
+  position: static;
+  top: auto;
+  right: auto;
 }
