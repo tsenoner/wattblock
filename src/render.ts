@@ -1,4 +1,5 @@
 import { sumFor, isGestrichen, winnerOf, type AppState, type TeamId } from "./state";
+import { loadTheme, type Theme } from "./theme";
 
 const TARGET_PRESETS = [11, 15, 18];
 
@@ -15,8 +16,55 @@ export function escape(v: unknown): string {
     .replace(/'/g, "&#39;");
 }
 
+function renderThemeToggle(theme: Theme): string {
+  const glyph =
+    theme === "light" ? renderSunGlyph()
+    : theme === "dark" ? renderMoonGlyph()
+    : renderAutoGlyph();
+  return `
+    <button type="button" class="theme-toggle" data-action="cycle-theme"
+            aria-label="Theme: ${theme}" title="Theme">
+      ${glyph}
+    </button>
+  `;
+}
+
+function renderSunGlyph(): string {
+  return `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="4" fill="currentColor"/>
+      <path d="M12 2v2"/>
+      <path d="M12 20v2"/>
+      <path d="M2 12h2"/>
+      <path d="M20 12h2"/>
+      <path d="M4.93 4.93l1.41 1.41"/>
+      <path d="M17.66 17.66l1.41 1.41"/>
+      <path d="M4.93 19.07l1.41-1.41"/>
+      <path d="M17.66 6.34l1.41-1.41"/>
+    </svg>
+  `;
+}
+
+function renderMoonGlyph(): string {
+  return `
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  `;
+}
+
+function renderAutoGlyph(): string {
+  return `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
+    </svg>
+  `;
+}
+
 function renderSetup(state: AppState): string {
   const { target, teamA, teamB } = state.setup;
+  const theme = loadTheme();
   const presetChips = TARGET_PRESETS.map(
     (t) =>
       `<button type="button" class="chip ${t === target ? "chip--active" : ""}" data-action="preset-target" data-value="${t}">${t}</button>`,
@@ -24,6 +72,7 @@ function renderSetup(state: AppState): string {
   const customActive = !TARGET_PRESETS.includes(target);
   return `
     <main class="setup">
+      <div class="setup__chrome">${renderThemeToggle(theme)}</div>
       <h1 class="setup__title">Wattblock</h1>
       <label class="setup__label">Spielziel</label>
       <div class="chips" role="radiogroup" aria-label="Spielziel">
@@ -87,12 +136,15 @@ function renderScoring(state: AppState): string {
     : "";
   return `
     <main class="scoring">
-      <button type="button" class="scoring__settings" data-action="open-setup" aria-label="Einstellungen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-      </button>
+      <div class="scoring__chrome">
+        ${renderThemeToggle(loadTheme())}
+        <button type="button" class="scoring__settings" data-action="open-setup" aria-label="Einstellungen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
       <div class="scoring__target">
         <span class="scoring__target-label">SPIELZIEL</span>
         <span class="scoring__target-value">${state.setup.target}</span>

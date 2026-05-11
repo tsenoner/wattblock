@@ -13,8 +13,10 @@ import {
 } from "./state";
 import { load, save } from "./storage";
 import { render } from "./render";
+import { applyTheme, loadTheme, nextTheme, saveTheme } from "./theme";
 
 registerSW({ immediate: true });
+applyTheme(loadTheme());
 
 const root = document.querySelector<HTMLDivElement>("#app");
 if (!root) throw new Error("Missing #app root");
@@ -78,6 +80,13 @@ root.addEventListener("click", (e) => {
     case "play-again":
       setState(start(newMatch(state)));
       break;
+    case "cycle-theme": {
+      const t = nextTheme(loadTheme());
+      saveTheme(t);
+      applyTheme(t);
+      render(state, root!);
+      break;
+    }
   }
 });
 
