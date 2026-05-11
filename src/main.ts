@@ -4,6 +4,7 @@ import {
   addPoint,
   newMatch,
   openSetup,
+  resumeFromPersisted,
   start,
   undo,
   updateSetup,
@@ -18,7 +19,9 @@ registerSW({ immediate: true });
 const root = document.querySelector<HTMLDivElement>("#app");
 if (!root) throw new Error("Missing #app root");
 
-let state: AppState = load();
+const loaded: AppState = load();
+let state: AppState = resumeFromPersisted(loaded);
+if (state !== loaded) save(state);
 
 function setState(next: AppState): void {
   if (next === state) return;
