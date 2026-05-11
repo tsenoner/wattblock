@@ -43,3 +43,15 @@ export function winnerOf(state: AppState): TeamId | null {
   if (sumFor(state, "B") >= state.setup.target) return "B";
   return null;
 }
+
+export function undo(state: AppState, team: TeamId): AppState {
+  const lastIdx = (() => {
+    for (let i = state.scores.length - 1; i >= 0; i--) {
+      if (state.scores[i].team === team) return i;
+    }
+    return -1;
+  })();
+  if (lastIdx === -1) return state;
+  const scores = state.scores.slice(0, lastIdx).concat(state.scores.slice(lastIdx + 1));
+  return { ...state, scores };
+}

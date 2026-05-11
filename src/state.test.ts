@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { INITIAL_STATE, addPoint, sumFor, isGestrichen, winnerOf, type AppState, type TeamId } from "./state";
+import { INITIAL_STATE, addPoint, sumFor, isGestrichen, winnerOf, undo, type AppState, type TeamId } from "./state";
 
 describe("INITIAL_STATE", () => {
   it("starts in setup view, target 15, blank names, no scores", () => {
@@ -86,5 +86,44 @@ describe("addPoint guards", () => {
     expect(winnerOf(won)).toBe("A");
     const next = addPoint(won, "B", 2);
     expect(next).toBe(won); // same reference — proves no-op
+  });
+});
+
+describe("undo", () => {
+  it("removes the last entry of the given team only", () => {
+    const s: AppState = {
+      ...INITIAL_STATE,
+      scores: [
+        { team: "A", value: 2 },
+        { team: "B", value: 3 },
+        { team: "A", value: 4 },
+        { team: "B", value: 5 },
+      ],
+    };
+    const next = undo(s, "A");
+    expect(next.scores).toEqual([
+      { team: "A", value: 2 },
+      { team: "B", value: 3 },
+      { team: "B", value: 5 },
+    ]);
+  });
+
+  it("is a no-op when team has no entries", () => {
+    const s: AppState = {
+      ...INITIAL_STATE,
+      scores: [{ team: "B", value: 3 }],
+    };
+    const next = undo(s, "A");
+    expect(next).toBe(s);
+  });
+
+  it("works after a winner — un-wins the match", () => {
+    const won: AppState = {
+      ...INITIAL_STATE,
+      scores: [{ team: "A", value: 5 }, { team: "A", value: 5 }, { team: "A", value: 5 }],
+    };
+    expect(winnerOf(won)).toBe("A");
+    const after = undo(won, "A");
+    expect(winnerOf(after)).toBeNull();
   });
 });
