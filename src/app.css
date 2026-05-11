@@ -28,6 +28,9 @@
 
 html, body {
   margin: 0;
+  height: 100svh;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: var(--bg);
   color: var(--ink);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -36,11 +39,18 @@ html, body {
 }
 
 body {
-  min-height: 100dvh;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-#app { max-width: 540px; margin: 0 auto; padding: 16px; }
+#app {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 16px;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
 
 /* SETUP */
 .setup { display: flex; flex-direction: column; gap: 8px; }
@@ -67,6 +77,9 @@ body {
   font: inherit;
   cursor: pointer;
   min-height: 40px;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .chip--input { width: 80px; text-align: center; }
 .chip--active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
@@ -89,6 +102,9 @@ body {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .setup__newmatch {
   background: transparent;
@@ -100,9 +116,10 @@ body {
 /* SCORING */
 .scoring {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr auto auto;
   gap: 8px;
-  min-height: calc(100dvh - 32px);
+  flex: 1;
+  min-height: 0;
   position: relative;
 }
 .scoring__target {
@@ -117,8 +134,8 @@ body {
 
 .scoring__settings {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: max(4px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
   width: 36px;
   height: 36px;
   border: 0;
@@ -130,6 +147,9 @@ body {
   cursor: pointer;
   padding: 6px;
   border-radius: 999px;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .scoring__settings:hover,
 .scoring__settings:focus-visible {
@@ -161,6 +181,9 @@ body {
   font-size: 14px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .rail__btn--neg { background: var(--neg); }
 .rail__btn--undo {
@@ -205,6 +228,7 @@ body {
   font-weight: 600;
   position: relative;
   min-height: 60px;
+  overflow-y: auto;
 }
 .col__score { line-height: 1; }
 .col__sum {
@@ -230,7 +254,10 @@ body {
 
 /* COMPACT WINNER BANNER */
 .banner {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   width: 100%;
   border: 0;
   background: var(--ink);
@@ -243,4 +270,7 @@ body {
   cursor: pointer;
   font-size: 15px;
   margin-top: 4px;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
