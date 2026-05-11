@@ -33,19 +33,27 @@ Push to GitHub. Connect the repo in Vercel → it auto-detects Vite. No env vars
 
 ## Manuelle Tests / Manual smoke test
 
-Run before each release. Phone (or Chrome DevTools narrow viewport, 390 px):
+Run before each release. Phone (or Chrome DevTools narrow viewport, 390 px).
 
-- [ ] Setup screen renders; Starten disabled until both team names are non-empty.
+### Core (carried from v0.1.0 / v0.1.1)
+
+- [ ] Setup screen renders; **Starten** is always enabled. Empty team names render as "Team 1" / "Team 2".
 - [ ] Preset chips (11 / 15 / 18) and custom number field both update the target.
-- [ ] Score buttons add points to the correct column.
-- [ ] Sum updates after every tap.
-- [ ] Undo (↶) removes the last entry from its own column only.
+- [ ] Score buttons add points to the correct column. Sum updates after every tap.
 - [ ] Gestrichen line appears at `sum ≥ target − 2`; disappears if undo brings sum below.
-- [ ] Reaching target dims the point buttons (both teams); undo buttons stay active.
-- [ ] Winner banner is one line, compact, clickable → starts new match with same names + target.
-- [ ] Refresh the browser → state is restored (auto-persist).
-- [ ] Tap SPIELZIEL number → returns to setup with current values; **Neues Spiel** button visible when scores exist.
+- [ ] Reaching target dims the point buttons (both teams); history buttons stay active.
+- [ ] Refresh the browser → state is restored. A finished match is consumed on next launch (auto-fresh setup).
 - [ ] Install on phone → opens standalone, works in airplane mode.
+
+### v0.1.2 manual smoke test
+
+- [ ] No vertical scrollbar on a notched phone with an empty board (iPhone target = 15, no scores).
+- [ ] Double-tapping any point button (2 / 3 / 4 / 5 / −2) or Zurück / Wiederholen does **not** zoom the page.
+- [ ] Theme toggle (top-right corner of both setup and scoring) cycles auto → light → dark → auto. Reload — theme persists.
+- [ ] Add a `3` for team A. Tap **Zurück**. The `3` disappears, **Wiederholen** is enabled. Tap **Wiederholen**. The `3` reappears.
+- [ ] Add a `2` for team B. **Wiederholen** is disabled (new action invalidated redo).
+- [ ] From a mid-game state, tap the gear. Setup shows **Spiel fortsetzen** (primary) + **Neues Spiel** (secondary). Tap **Spiel fortsetzen** — scoring resumes with all scores intact.
+- [ ] Win a match. Banner shows two lines: `<Team> gewinnt` and `Revanche ↻`. Tap it — scores clear, scoring view shows fresh columns.
 
 ## License
 
