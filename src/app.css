@@ -158,9 +158,6 @@ body {
 .scoring__target-value { font-size: 28px; font-weight: 700; }
 
 .scoring__settings {
-  position: absolute;
-  top: max(4px, env(safe-area-inset-top));
-  right: max(8px, env(safe-area-inset-right));
   width: 36px;
   height: 36px;
   border: 0;
@@ -211,17 +208,6 @@ body {
   user-select: none;
 }
 .rail__btn--neg { background: var(--neg); }
-.rail__btn--undo {
-  background: var(--undo);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.rail__btn--undo svg {
-  width: 20px;
-  height: 20px;
-  display: block;
-}
 .rail__btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
 .col {
@@ -341,12 +327,6 @@ body {
   display: flex;
   justify-content: flex-end;
   margin: 0 0 -16px 0;
-}
-
-.scoring__chrome .scoring__settings {
-  position: static;
-  top: auto;
-  right: auto;
 }
 
 .banner__winner { font-size: 16px; line-height: 1.2; }

@@ -13,7 +13,7 @@ After install the app works fully offline.
 ## Spielen / How to play
 
 1. Setup: Spielziel wählen (11, 15, 18 oder eigene Zahl), Teamnamen eingeben, **Starten**.
-2. Während des Spiels: über die seitlichen Knöpfe Punkte (2/3/4/5), Strafpunkte (−2) oder Zurück (↶) für das jeweilige Team eingeben.
+2. Während des Spiels: über die seitlichen Knöpfe Punkte (2/3/4/5) und Strafpunkte (−2) eintragen; mit **Zurück / Wiederholen** unter den Spalten einen Zug rückgängig machen oder wiederherstellen.
 3. Wenn die Summe eines Teams `Ziel − 2` erreicht, erscheint automatisch der vertikale Strich ("gestrichen").
 4. Wenn ein Team das Ziel erreicht, wird der Sieger unten eingeblendet. Tippen → neues Spiel.
 
