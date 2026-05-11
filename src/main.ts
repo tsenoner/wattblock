@@ -56,11 +56,9 @@ root.addEventListener("click", (e) => {
       if (team && Number.isFinite(value)) setState(addPoint(state, team, value));
       break;
     }
-    case "undo": {
-      const team = getTeamFromRail(trigger);
-      if (team) setState(undo(state, team));
+    case "undo":
+      setState(undo(state));
       break;
-    }
     case "preset-target": {
       const value = Number(trigger.dataset.value);
       if (Number.isFinite(value) && value > 0) {
