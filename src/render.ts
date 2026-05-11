@@ -161,7 +161,12 @@ function renderScoring(state: AppState): string {
       </div>
       ${
         winner
-          ? `<button type="button" class="banner" data-action="play-again">${escape(winnerName)} gewinnen <span aria-hidden="true">↻</span> neues Spiel</button>`
+          ? `
+            <button type="button" class="banner" data-action="play-again">
+              <span class="banner__winner">${escape(winnerName)} gewinnt</span>
+              <span class="banner__cta">Revanche <span aria-hidden="true">↻</span></span>
+            </button>
+          `
           : ""
       }
     </main>

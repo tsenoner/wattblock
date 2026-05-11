@@ -348,3 +348,6 @@ body {
   top: auto;
   right: auto;
 }
+
+.banner__winner { font-size: 16px; line-height: 1.2; }
+.banner__cta    { font-size: 13px; line-height: 1.2; opacity: 0.85; }
