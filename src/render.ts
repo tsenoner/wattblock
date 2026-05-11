@@ -122,13 +122,32 @@ function renderRail(team: TeamId, disabled: boolean): string {
       <button type="button" class="${cls("4")}" data-action="add" data-value="4" ${dis}>4</button>
       <button type="button" class="${cls("5")}" data-action="add" data-value="5" ${dis}>5</button>
       <button type="button" class="${cls("neg")}" data-action="add" data-value="-2" ${dis}>−2</button>
-      <button type="button" class="${cls("undo")}" data-action="undo" aria-label="Zurück">
+    </nav>
+  `;
+}
+
+function renderHistoryBar(state: AppState): string {
+  const canUndo = state.scores.length > 0;
+  const canRedo = state.undone.length > 0;
+  return `
+    <div class="history" role="group" aria-label="Verlauf">
+      <button type="button" class="history__btn history__btn--undo"
+              data-action="undo" aria-label="Zurück" ${canUndo ? "" : "disabled"}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
           <path d="M3 7v6h6"/>
           <path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>
         </svg>
+        <span>Zurück</span>
       </button>
-    </nav>
+      <button type="button" class="history__btn history__btn--redo"
+              data-action="redo" aria-label="Wiederholen" ${canRedo ? "" : "disabled"}>
+        <span>Wiederholen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M21 7v6h-6"/>
+          <path d="M3 17a9 9 0 0 1 15-6.7L21 13"/>
+        </svg>
+      </button>
+    </div>
   `;
 }
 
@@ -159,6 +178,7 @@ function renderScoring(state: AppState): string {
         ${renderColumn(state, "B")}
         ${renderRail("B", winner !== null)}
       </div>
+      ${renderHistoryBar(state)}
       ${
         winner
           ? `

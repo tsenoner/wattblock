@@ -4,6 +4,7 @@ import {
   addPoint,
   newMatch,
   openSetup,
+  redo,
   resumeFromPersisted,
   start,
   undo,
@@ -60,6 +61,9 @@ root.addEventListener("click", (e) => {
     }
     case "undo":
       setState(undo(state));
+      break;
+    case "redo":
+      setState(redo(state));
       break;
     case "preset-target": {
       const value = Number(trigger.dataset.value);

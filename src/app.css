@@ -351,3 +351,32 @@ body {
 
 .banner__winner { font-size: 16px; line-height: 1.2; }
 .banner__cta    { font-size: 13px; line-height: 1.2; opacity: 0.85; }
+
+.history {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.history__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--rule);
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  border-radius: 10px;
+  padding: 10px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.history__btn:hover:not(:disabled),
+.history__btn:focus-visible:not(:disabled) {
+  color: var(--ink);
+}
+.history__btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.history__btn svg { width: 18px; height: 18px; }
