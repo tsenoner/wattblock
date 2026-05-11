@@ -1,11 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { INITIAL_STATE, addPoint, sumFor, isGestrichen, winnerOf, undo, updateSetup, newMatch, start, openSetup, resumeFromPersisted, type AppState, type TeamId } from "./state";
+import {
+  INITIAL_STATE,
+  addPoint,
+  sumFor,
+  isGestrichen,
+  winnerOf,
+  undo,
+  redo,
+  updateSetup,
+  newMatch,
+  start,
+  openSetup,
+  resumeFromPersisted,
+  type AppState,
+  type TeamId,
+} from "./state";
 
 describe("INITIAL_STATE", () => {
-  it("starts in setup view, target 15, blank names, no scores", () => {
+  it("starts in setup view, target 15, blank names, no scores, no undone", () => {
     expect(INITIAL_STATE).toEqual({
       setup: { target: 15, teamA: "", teamB: "" },
       scores: [],
+      undone: [],
       view: "setup",
     });
   });
@@ -90,7 +106,7 @@ describe("addPoint guards", () => {
 });
 
 describe("undo", () => {
-  it("removes the last entry of the given team only", () => {
+  it("removes the most recent entry regardless of team", () => {
     const s: AppState = {
       ...INITIAL_STATE,
       scores: [
@@ -100,31 +116,33 @@ describe("undo", () => {
         { team: "B", value: 5 },
       ],
     };
-    const next = undo(s, "A");
+    const next = undo(s);
     expect(next.scores).toEqual([
       { team: "A", value: 2 },
       { team: "B", value: 3 },
-      { team: "B", value: 5 },
+      { team: "A", value: 4 },
     ]);
+    expect(next.undone).toEqual([{ team: "B", value: 5 }]);
   });
 
-  it("is a no-op when team has no entries", () => {
-    const s: AppState = {
-      ...INITIAL_STATE,
-      scores: [{ team: "B", value: 3 }],
-    };
-    const next = undo(s, "A");
-    expect(next).toBe(s);
+  it("is a no-op when scores is empty", () => {
+    const s: AppState = { ...INITIAL_STATE };
+    expect(undo(s)).toBe(s);
   });
 
   it("works after a winner — un-wins the match", () => {
     const won: AppState = {
       ...INITIAL_STATE,
-      scores: [{ team: "A", value: 5 }, { team: "A", value: 5 }, { team: "A", value: 5 }],
+      scores: [
+        { team: "A", value: 5 },
+        { team: "A", value: 5 },
+        { team: "A", value: 5 },
+      ],
     };
     expect(winnerOf(won)).toBe("A");
-    const after = undo(won, "A");
+    const after = undo(won);
     expect(winnerOf(after)).toBeNull();
+    expect(after.undone).toEqual([{ team: "A", value: 5 }]);
   });
 });
 
@@ -177,14 +195,107 @@ describe("resumeFromPersisted", () => {
   it("returns a fresh setup state when a winner exists, preserving names and target", () => {
     const won: AppState = {
       setup: { target: 11, teamA: "Tobias", teamB: "Anna" },
-      scores: [{ team: "A", value: 5 }, { team: "A", value: 5 }, { team: "A", value: 5 }],
+      scores: [
+        { team: "A", value: 5 },
+        { team: "A", value: 5 },
+        { team: "A", value: 5 },
+      ],
+      undone: [],
       view: "scoring",
     };
     expect(winnerOf(won)).toBe("A");
     expect(resumeFromPersisted(won)).toEqual({
       setup: { target: 11, teamA: "Tobias", teamB: "Anna" },
       scores: [],
+      undone: [],
       view: "setup",
     });
+  });
+});
+
+describe("redo", () => {
+  it("moves the last undone entry back to scores", () => {
+    const s: AppState = {
+      ...INITIAL_STATE,
+      scores: [{ team: "A", value: 3 }],
+    };
+    const undone = undo(s);
+    expect(undone.scores).toEqual([]);
+    expect(undone.undone).toEqual([{ team: "A", value: 3 }]);
+    const redone = redo(undone);
+    expect(redone.scores).toEqual([{ team: "A", value: 3 }]);
+    expect(redone.undone).toEqual([]);
+  });
+
+  it("is a no-op when undone is empty", () => {
+    const s: AppState = { ...INITIAL_STATE };
+    expect(redo(s)).toBe(s);
+  });
+
+  it("preserves LIFO order across multiple undo/redo cycles", () => {
+    let s: AppState = {
+      ...INITIAL_STATE,
+      scores: [
+        { team: "A", value: 2 },
+        { team: "B", value: 3 },
+        { team: "A", value: 4 },
+      ],
+    };
+    s = undo(s); // pops A4
+    s = undo(s); // pops B3
+    expect(s.undone).toEqual([
+      { team: "A", value: 4 },
+      { team: "B", value: 3 },
+    ]);
+    s = redo(s); // pushes B3 back
+    expect(s.scores).toEqual([
+      { team: "A", value: 2 },
+      { team: "B", value: 3 },
+    ]);
+    expect(s.undone).toEqual([{ team: "A", value: 4 }]);
+  });
+
+  it("can re-win the match by restoring the winning entry", () => {
+    const won: AppState = {
+      ...INITIAL_STATE,
+      scores: [
+        { team: "A", value: 5 },
+        { team: "A", value: 5 },
+        { team: "A", value: 5 },
+      ],
+    };
+    const unWon = undo(won);
+    expect(winnerOf(unWon)).toBeNull();
+    const reWon = redo(unWon);
+    expect(winnerOf(reWon)).toBe("A");
+  });
+});
+
+describe("addPoint clears undone", () => {
+  it("a fresh addPoint invalidates the redo stack", () => {
+    let s: AppState = {
+      ...INITIAL_STATE,
+      scores: [{ team: "A", value: 3 }],
+    };
+    s = undo(s);
+    expect(s.undone).toEqual([{ team: "A", value: 3 }]);
+    s = addPoint(s, "B", 4);
+    expect(s.scores).toEqual([{ team: "B", value: 4 }]);
+    expect(s.undone).toEqual([]);
+  });
+});
+
+describe("newMatch clears undone", () => {
+  it("clears both scores and undone, keeps setup, switches to setup view", () => {
+    const s: AppState = {
+      ...INITIAL_STATE,
+      view: "scoring",
+      scores: [{ team: "A", value: 5 }],
+      undone: [{ team: "B", value: 2 }],
+    };
+    const next = newMatch(s);
+    expect(next.scores).toEqual([]);
+    expect(next.undone).toEqual([]);
+    expect(next.view).toBe("setup");
   });
 });
