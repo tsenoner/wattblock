@@ -76,3 +76,15 @@ describe("selectors", () => {
     expect(winnerOf(winB)).toBe("B");
   });
 });
+
+describe("addPoint guards", () => {
+  it("is a no-op when a winner already exists", () => {
+    const won: AppState = {
+      ...INITIAL_STATE,
+      scores: [{ team: "A", value: 5 }, { team: "A", value: 5 }, { team: "A", value: 5 }],
+    };
+    expect(winnerOf(won)).toBe("A");
+    const next = addPoint(won, "B", 2);
+    expect(next).toBe(won); // same reference — proves no-op
+  });
+});

@@ -24,6 +24,7 @@ export const INITIAL_STATE: AppState = {
 };
 
 export function addPoint(state: AppState, team: TeamId, value: number): AppState {
+  if (winnerOf(state) !== null) return state;
   return { ...state, scores: [...state.scores, { team, value }] };
 }
 
