@@ -86,8 +86,12 @@ function renderSetup(state: AppState): string {
       <input id="teamA" class="setup__input" type="text" value="${escape(teamA)}" placeholder="Team 1" data-action="team-a" autocomplete="off" />
       <label class="setup__label" for="teamB">Team 2</label>
       <input id="teamB" class="setup__input" type="text" value="${escape(teamB)}" placeholder="Team 2" data-action="team-b" autocomplete="off" />
-      <button type="button" class="setup__start" data-action="start">Starten</button>
-      ${state.scores.length > 0 ? `<button type="button" class="setup__newmatch" data-action="new-match">Neues Spiel</button>` : ""}
+      ${state.scores.length > 0
+        ? `
+          <button type="button" class="setup__start" data-action="start">Spiel fortsetzen</button>
+          <button type="button" class="setup__newmatch" data-action="new-match">Neues Spiel</button>
+        `
+        : `<button type="button" class="setup__start" data-action="start">Starten</button>`}
     </main>
   `;
 }
