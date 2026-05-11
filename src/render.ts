@@ -34,18 +34,18 @@ function renderSetup(state: AppState): string {
           data-action="custom-target" aria-label="Eigenes Spielziel" />
       </div>
       <label class="setup__label" for="teamA">Team 1</label>
-      <input id="teamA" class="setup__input" type="text" value="${escape(teamA)}" data-action="team-a" autocomplete="off" />
+      <input id="teamA" class="setup__input" type="text" value="${escape(teamA)}" placeholder="Team 1" data-action="team-a" autocomplete="off" />
       <label class="setup__label" for="teamB">Team 2</label>
-      <input id="teamB" class="setup__input" type="text" value="${escape(teamB)}" data-action="team-b" autocomplete="off" />
-      <button type="button" class="setup__start" data-action="start"
-        ${!teamA.trim() || !teamB.trim() ? "disabled" : ""}>Starten</button>
+      <input id="teamB" class="setup__input" type="text" value="${escape(teamB)}" placeholder="Team 2" data-action="team-b" autocomplete="off" />
+      <button type="button" class="setup__start" data-action="start">Starten</button>
       ${state.scores.length > 0 ? `<button type="button" class="setup__newmatch" data-action="new-match">Neues Spiel</button>` : ""}
     </main>
   `;
 }
 
 function renderColumn(state: AppState, team: TeamId): string {
-  const name = team === "A" ? state.setup.teamA : state.setup.teamB;
+  const stored = team === "A" ? state.setup.teamA : state.setup.teamB;
+  const name = stored || (team === "A" ? "Team 1" : "Team 2");
   const entries = state.scores.filter((e) => e.team === team);
   const struck = isGestrichen(state, team);
   const isWinner = winnerOf(state) === team;
@@ -81,7 +81,10 @@ function renderRail(team: TeamId, disabled: boolean): string {
 
 function renderScoring(state: AppState): string {
   const winner = winnerOf(state);
-  const winnerName = winner === "A" ? state.setup.teamA : winner === "B" ? state.setup.teamB : "";
+  const winnerName =
+    winner === "A" ? (state.setup.teamA || "Team 1")
+    : winner === "B" ? (state.setup.teamB || "Team 2")
+    : "";
   return `
     <main class="scoring">
       <button type="button" class="scoring__target" data-action="open-setup" aria-label="Einstellungen">
