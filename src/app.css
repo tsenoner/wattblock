@@ -157,6 +157,12 @@ body {
   color: var(--ink-soft);
   border: 1px solid var(--rule);
 }
+.setup__newmatch--armed {
+  background: var(--neg);
+  color: var(--bg);
+  border-color: var(--neg);
+  font-weight: 700;
+}
 .setup__start:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* SCORING */

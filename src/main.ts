@@ -9,6 +9,7 @@ import {
   start,
   undo,
   updateSetup,
+  winnerOf,
   type AppState,
   type TeamId,
 } from "./state";
@@ -26,11 +27,18 @@ const loaded: AppState = load();
 let state: AppState = resumeFromPersisted(loaded);
 if (state !== loaded) save(state);
 
+let armDiscard = false;
+
+function rerender(): void {
+  render(state, root!, { armDiscard });
+}
+
 function setState(next: AppState): void {
   if (next === state) return;
   state = next;
   save(state);
-  render(state, root!);
+  armDiscard = false;
+  rerender();
 }
 
 function setStateNoRender(next: AppState): void {
@@ -39,7 +47,7 @@ function setStateNoRender(next: AppState): void {
   save(state);
 }
 
-render(state, root);
+rerender();
 
 function getTeamFromRail(el: Element): TeamId | null {
   const rail = el.closest<HTMLElement>(".rail");
@@ -50,8 +58,25 @@ function getTeamFromRail(el: Element): TeamId | null {
 root.addEventListener("click", (e) => {
   if (!(e.target instanceof Element)) return;
   const trigger = e.target.closest<HTMLElement>("[data-action]");
+  const action = trigger?.dataset.action;
+
+  if (action === "new-match") {
+    const inProgress = state.scores.length > 0 && winnerOf(state) === null;
+    if (inProgress && !armDiscard) {
+      armDiscard = true;
+      rerender();
+      return;
+    }
+    setState(newMatch(state));
+    return;
+  }
+
+  if (armDiscard) {
+    armDiscard = false;
+    rerender();
+  }
+
   if (!trigger) return;
-  const action = trigger.dataset.action;
   switch (action) {
     case "add": {
       const team = getTeamFromRail(trigger);
@@ -78,9 +103,6 @@ root.addEventListener("click", (e) => {
     case "open-setup":
       setState(openSetup(state));
       break;
-    case "new-match":
-      setState(newMatch(state));
-      break;
     case "play-again":
       setState(start(newMatch(state)));
       break;
@@ -88,7 +110,7 @@ root.addEventListener("click", (e) => {
       const t = nextTheme(loadTheme());
       saveTheme(t);
       applyTheme(t);
-      render(state, root!);
+      rerender();
       break;
     }
   }
