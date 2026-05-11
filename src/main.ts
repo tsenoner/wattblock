@@ -1,3 +1,4 @@
+import "./app.css";
 import { registerSW } from "virtual:pwa-register";
 import {
   addPoint,
