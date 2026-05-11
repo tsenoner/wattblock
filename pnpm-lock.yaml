@@ -26,6 +26,9 @@ importers:
       vitest:
         specifier: ^2.0.0
         version: 2.1.9(jsdom@25.0.1)(terser@5.47.1)
+      workbox-window:
+        specifier: ^7.4.1
+        version: 7.4.1
 
 packages:
 
