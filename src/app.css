@@ -128,7 +128,17 @@ body {
   cursor: pointer;
 }
 .rail__btn--neg { background: var(--neg); }
-.rail__btn--undo { background: var(--undo); font-size: 18px; }
+.rail__btn--undo {
+  background: var(--undo);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.rail__btn--undo svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
 .rail__btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
 .col {

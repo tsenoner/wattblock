@@ -42,24 +42,24 @@ function getTeamFromRail(el: Element): TeamId | null {
 }
 
 root.addEventListener("click", (e) => {
-  const target = e.target;
-  if (!(target instanceof HTMLElement)) return;
-  const action = target.dataset.action;
-  if (!action) return;
+  if (!(e.target instanceof Element)) return;
+  const trigger = e.target.closest<HTMLElement>("[data-action]");
+  if (!trigger) return;
+  const action = trigger.dataset.action;
   switch (action) {
     case "add": {
-      const team = getTeamFromRail(target);
-      const value = Number(target.dataset.value);
+      const team = getTeamFromRail(trigger);
+      const value = Number(trigger.dataset.value);
       if (team && Number.isFinite(value)) setState(addPoint(state, team, value));
       break;
     }
     case "undo": {
-      const team = getTeamFromRail(target);
+      const team = getTeamFromRail(trigger);
       if (team) setState(undo(state, team));
       break;
     }
     case "preset-target": {
-      const value = Number(target.dataset.value);
+      const value = Number(trigger.dataset.value);
       if (Number.isFinite(value) && value > 0) {
         setState(updateSetup(state, { ...state.setup, target: value }));
       }
@@ -73,6 +73,9 @@ root.addEventListener("click", (e) => {
       break;
     case "new-match":
       setState(newMatch(state));
+      break;
+    case "play-again":
+      setState(start(newMatch(state)));
       break;
   }
 });
