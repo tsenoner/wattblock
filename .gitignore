@@ -6,6 +6,9 @@ dist/
 .env
 .env.*
 .vercel
+.claude/
+.playwright-mcp/
+scoring-*.png
 pnpm-workspace.yaml
 *.tsbuildinfo
 vite.config.js
