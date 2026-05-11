@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { INITIAL_STATE, addPoint, sumFor, isGestrichen, winnerOf, undo, updateSetup, newMatch, start, openSetup, type AppState, type TeamId } from "./state";
+import { INITIAL_STATE, addPoint, sumFor, isGestrichen, winnerOf, undo, updateSetup, newMatch, start, openSetup, resumeFromPersisted, type AppState, type TeamId } from "./state";
 
 describe("INITIAL_STATE", () => {
   it("starts in setup view, target 15, blank names, no scores", () => {
@@ -161,5 +161,30 @@ describe("lifecycle actions", () => {
   it("openSetup switches view to setup", () => {
     const s: AppState = { ...INITIAL_STATE, view: "scoring" };
     expect(openSetup(s).view).toBe("setup");
+  });
+});
+
+describe("resumeFromPersisted", () => {
+  it("returns the same reference when no winner exists", () => {
+    const s: AppState = {
+      ...INITIAL_STATE,
+      scores: [{ team: "A", value: 3 }, { team: "B", value: 2 }],
+      view: "scoring",
+    };
+    expect(resumeFromPersisted(s)).toBe(s);
+  });
+
+  it("returns a fresh setup state when a winner exists, preserving names and target", () => {
+    const won: AppState = {
+      setup: { target: 11, teamA: "Tobias", teamB: "Anna" },
+      scores: [{ team: "A", value: 5 }, { team: "A", value: 5 }, { team: "A", value: 5 }],
+      view: "scoring",
+    };
+    expect(winnerOf(won)).toBe("A");
+    expect(resumeFromPersisted(won)).toEqual({
+      setup: { target: 11, teamA: "Tobias", teamB: "Anna" },
+      scores: [],
+      view: "setup",
+    });
   });
 });

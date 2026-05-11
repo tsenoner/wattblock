@@ -71,3 +71,7 @@ export function start(state: AppState): AppState {
 export function openSetup(state: AppState): AppState {
   return { ...state, view: "setup" };
 }
+
+export function resumeFromPersisted(state: AppState): AppState {
+  return winnerOf(state) !== null ? newMatch(state) : state;
+}
