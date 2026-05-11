@@ -1,4 +1,4 @@
-import type { AppState } from "./state";
+import { sumFor, isGestrichen, winnerOf, type AppState, type TeamId } from "./state";
 
 const TARGET_PRESETS = [11, 15, 18];
 
@@ -44,6 +44,56 @@ function renderSetup(state: AppState): string {
   `;
 }
 
-function renderScoring(_state: AppState): string {
-  return `<main class="scoring">TODO</main>`;
+function renderColumn(state: AppState, team: TeamId): string {
+  const name = team === "A" ? state.setup.teamA : state.setup.teamB;
+  const entries = state.scores.filter((e) => e.team === team);
+  const struck = isGestrichen(state, team);
+  const isWinner = winnerOf(state) === team;
+  const scoresHtml = entries.map((e) => `<li class="col__score">${e.value}</li>`).join("");
+  return `
+    <section class="col ${struck ? "col--struck" : ""} ${isWinner ? "col--winner" : ""}">
+      <h2 class="col__header">${escape(name)}${isWinner ? " <span aria-label='Sieger'>👑</span>" : ""}</h2>
+      <ol class="col__scores">${scoresHtml}</ol>
+      <div class="col__sum">${sumFor(state, team)}</div>
+    </section>
+  `;
+}
+
+function renderRail(team: TeamId, disabled: boolean): string {
+  const cls = (v: string) => `rail__btn rail__btn--${v}`;
+  const dis = disabled ? "disabled" : "";
+  return `
+    <nav class="rail" data-team="${team}" aria-label="Punkte für Team ${team}">
+      <button type="button" class="${cls("2")}" data-action="add" data-value="2" ${dis}>2</button>
+      <button type="button" class="${cls("3")}" data-action="add" data-value="3" ${dis}>3</button>
+      <button type="button" class="${cls("4")}" data-action="add" data-value="4" ${dis}>4</button>
+      <button type="button" class="${cls("5")}" data-action="add" data-value="5" ${dis}>5</button>
+      <button type="button" class="${cls("neg")}" data-action="add" data-value="-2" ${dis}>−2</button>
+      <button type="button" class="${cls("undo")}" data-action="undo" aria-label="Zurück">↶</button>
+    </nav>
+  `;
+}
+
+function renderScoring(state: AppState): string {
+  const winner = winnerOf(state);
+  const winnerName = winner === "A" ? state.setup.teamA : winner === "B" ? state.setup.teamB : "";
+  return `
+    <main class="scoring">
+      <button type="button" class="scoring__target" data-action="open-setup" aria-label="Einstellungen">
+        <span class="scoring__target-label">SPIELZIEL</span>
+        <span class="scoring__target-value">${state.setup.target}</span>
+      </button>
+      <div class="scoring__body">
+        ${renderRail("A", winner !== null)}
+        ${renderColumn(state, "A")}
+        ${renderColumn(state, "B")}
+        ${renderRail("B", winner !== null)}
+      </div>
+      ${
+        winner
+          ? `<button type="button" class="banner" data-action="new-match">${escape(winnerName)} gewinnen · neues Spiel ↻</button>`
+          : ""
+      }
+    </main>
+  `;
 }
