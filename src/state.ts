@@ -22,3 +22,7 @@ export const INITIAL_STATE: AppState = {
   scores: [],
   view: "setup",
 };
+
+export function addPoint(state: AppState, team: TeamId, value: number): AppState {
+  return { ...state, scores: [...state.scores, { team, value }] };
+}
