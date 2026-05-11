@@ -49,7 +49,7 @@ Run before each release. Phone (or Chrome DevTools narrow viewport, 390 px).
 
 - [ ] No vertical scrollbar on a notched phone with an empty board (iPhone target = 15, no scores).
 - [ ] Double-tapping any point button (2 / 3 / 4 / 5 / −2) or Zurück / Wiederholen does **not** zoom the page.
-- [ ] Theme toggle (top-right corner of both setup and scoring) cycles auto → light → dark → auto. Reload — theme persists.
+- [ ] Theme toggle (top-right corner of both setup and scoring) flips between light and dark. Reload — theme persists.
 - [ ] Add a `3` for team A. Tap **Zurück**. The `3` disappears, **Wiederholen** is enabled. Tap **Wiederholen**. The `3` reappears.
 - [ ] Add a `2` for team B. **Wiederholen** is disabled (new action invalidated redo).
 - [ ] From a mid-game state, tap the gear. Setup shows **Spiel fortsetzen** (primary) + **Neues Spiel** (secondary). Tap **Spiel fortsetzen** — scoring resumes with all scores intact.
