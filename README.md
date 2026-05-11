@@ -57,6 +57,16 @@ Run before each release. Phone (or Chrome DevTools narrow viewport, 390 px).
 - [ ] From a mid-game state, tap the gear. Setup shows **Spiel fortsetzen** (primary) + **Neues Spiel** (secondary). Tap **Spiel fortsetzen** — scoring resumes with all scores intact.
 - [ ] Win a match. Banner shows two lines: `<Team> gewinnt` and `Revanche ↻`. Tap it — scores clear, scoring view shows fresh columns.
 
+### v0.1.3 confirm-discard on Neues Spiel
+
+- [ ] Mid-game (scores > 0, no winner), tap gear → setup → tap **Neues Spiel** once: button turns red, label reads **Fortschritt verwerfen!**. Scores still in storage.
+- [ ] From the armed state, second tap on the red button: scores and undo history clear; setup view stays open with **Starten**.
+- [ ] From the armed state, tap **Spiel fortsetzen**: button disarms, scoring resumes with all scores intact.
+- [ ] From the armed state, tap a preset chip (11 / 15 / 18) or change the custom target: button disarms, target updates, scores intact.
+- [ ] From the armed state, tap the theme toggle: button disarms, theme cycles, scores intact.
+- [ ] From the armed state, reload the page: button is **not** armed after reload.
+- [ ] After winning, gear → setup → tap **Neues Spiel**: discards immediately, no two-tap gate.
+
 ## License
 
 MIT © tsenoner

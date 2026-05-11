@@ -3,8 +3,14 @@ import { loadTheme, type Theme } from "./theme";
 
 const TARGET_PRESETS = [11, 15, 18];
 
-export function render(state: AppState, root: HTMLElement): void {
-  root.innerHTML = state.view === "setup" ? renderSetup(state) : renderScoring(state);
+export interface ViewState {
+  armDiscard: boolean;
+}
+
+const DEFAULT_VIEW: ViewState = { armDiscard: false };
+
+export function render(state: AppState, root: HTMLElement, view: ViewState = DEFAULT_VIEW): void {
+  root.innerHTML = state.view === "setup" ? renderSetup(state, view) : renderScoring(state);
 }
 
 export function escape(v: unknown): string {
@@ -50,7 +56,7 @@ function renderMoonGlyph(): string {
   `;
 }
 
-function renderSetup(state: AppState): string {
+function renderSetup(state: AppState, view: ViewState): string {
   const { target, teamA, teamB } = state.setup;
   const theme = loadTheme();
   const presetChips = TARGET_PRESETS.map(
@@ -58,6 +64,10 @@ function renderSetup(state: AppState): string {
       `<button type="button" class="chip ${t === target ? "chip--active" : ""}" data-action="preset-target" data-value="${t}">${t}</button>`,
   ).join("");
   const customActive = !TARGET_PRESETS.includes(target);
+  const armed = view.armDiscard && state.scores.length > 0 && winnerOf(state) === null;
+  const newMatchLabel = armed ? "Fortschritt verwerfen!" : "Neues Spiel";
+  const newMatchClass = armed ? "setup__newmatch setup__newmatch--armed" : "setup__newmatch";
+  const newMatchAria = armed ? "Fortschritt verwerfen — Bestätigen" : "Neues Spiel";
   return `
     <main class="setup">
       <div class="setup__chrome">${renderThemeToggle(theme)}</div>
@@ -77,7 +87,7 @@ function renderSetup(state: AppState): string {
       ${state.scores.length > 0
         ? `
           <button type="button" class="setup__start" data-action="start">Spiel fortsetzen</button>
-          <button type="button" class="setup__newmatch" data-action="new-match">Neues Spiel</button>
+          <button type="button" class="${newMatchClass}" data-action="new-match" aria-label="${newMatchAria}">${newMatchLabel}</button>
         `
         : `<button type="button" class="setup__start" data-action="start">Starten</button>`}
     </main>
