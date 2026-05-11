@@ -6,3 +6,9 @@ dist/
 .env
 .env.*
 .vercel
+pnpm-workspace.yaml
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+pwa-assets.config.js
+pwa-assets.config.d.ts
