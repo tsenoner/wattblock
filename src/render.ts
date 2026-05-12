@@ -11,6 +11,11 @@ const DEFAULT_VIEW: ViewState = { armDiscard: false };
 
 export function render(state: AppState, root: HTMLElement, view: ViewState = DEFAULT_VIEW): void {
   root.innerHTML = state.view === "setup" ? renderSetup(state, view) : renderScoring(state);
+  if (state.view === "scoring") {
+    for (const list of root.querySelectorAll<HTMLElement>(".col__scores")) {
+      list.scrollTop = list.scrollHeight;
+    }
+  }
 }
 
 export function escape(v: unknown): string {

@@ -168,7 +168,11 @@ body {
 /* SCORING */
 .scoring {
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  /* minmax(0, 1fr) — NOT 1fr — so the body row can shrink below content size
+     and let .col__scores actually scroll when entries exceed the column. With
+     a plain 1fr (== minmax(auto, 1fr)) the track grows to fit content and the
+     scroll container never overflows. */
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   gap: 8px;
   flex: 1;
   min-height: 0;
@@ -216,6 +220,7 @@ body {
   grid-template-columns: 44px 1fr 1fr 44px;
   gap: 8px;
   align-items: stretch;
+  min-height: 0;
 }
 
 .rail { display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 4px 0; }
@@ -242,9 +247,12 @@ body {
   border: 1px solid var(--rule);
   border-radius: 12px;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  /* See note on .scoring — minmax(0, 1fr) keeps the scores row from growing
+     past the column and lets its overflow-y: auto kick in. */
+  grid-template-rows: auto minmax(0, 1fr) auto;
   position: relative;
   overflow: hidden;
+  min-height: 0;
 }
 .col__header {
   margin: 0;
